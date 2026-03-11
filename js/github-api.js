@@ -14,7 +14,7 @@ const LANG_COLORS = {
 
 async function loadAllRepos() {
     const username = "GiovanniPasq";
-    const specialRepos = ["fpv-iplab/STMDA-RetinaNet", "fpv-iplab/DA-RetinaNet", "GiovanniPasq/MITS-GAN"];
+    const specialRepos = ["fpv-iplab/STMDA-RetinaNet", "fpv-iplab/DA-RetinaNet", "GiovanniPasq/MITS-GAN", "GiovanniPasq/DA-Faster-RCNN"];
     const container = document.getElementById("repos");
     if (!container) return;
 
