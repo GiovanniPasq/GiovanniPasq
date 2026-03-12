@@ -14,7 +14,9 @@ const LANG_COLORS = {
 
 async function loadAllRepos() {
     const username = "GiovanniPasq";
-    const specialRepos = ["fpv-iplab/STMDA-RetinaNet", "fpv-iplab/DA-RetinaNet", "GiovanniPasq/MITS-GAN", "GiovanniPasq/DA-Faster-RCNN"];
+    const specialRepos = ["GiovanniPasq/DA-Faster-RCNN"];
+    // Repos linked to publications are shown in the Publications section, not here
+    const pubRepos = new Set(["stmda-retinanet", "da-retinanet", "mits-gan"]);
     const container = document.getElementById("repos");
     if (!container) return;
 
@@ -38,7 +40,7 @@ async function loadAllRepos() {
         if (res.ok) {
             const personalRepos = await res.json();
             personalRepos.forEach(repo => {
-                if (!addedRepos.has(repo.name.toLowerCase()) && repo.name.toLowerCase() !== username.toLowerCase()) {
+                if (!addedRepos.has(repo.name.toLowerCase()) && repo.name.toLowerCase() !== username.toLowerCase() && !pubRepos.has(repo.name.toLowerCase())) {
                     repo.isSpecial = false;
                     allProjectData.push(repo);
                 }
@@ -107,3 +109,27 @@ function createRepoCard(repo) {
 }
 
 loadAllRepos();
+
+async function loadPubRepoStats() {
+    const repoLinks = document.querySelectorAll('.pub-link--repo[data-repo]');
+    for (const link of repoLinks) {
+        const repoPath = link.dataset.repo;
+        try {
+            const res = await fetch(`https://api.github.com/repos/${repoPath}`);
+            if (res.ok) {
+                const data = await res.json();
+                link.href = data.html_url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                const starsEl = link.querySelector('.stat-stars');
+                const forksEl = link.querySelector('.stat-forks');
+                if (starsEl) starsEl.textContent = data.stargazers_count;
+                if (forksEl) forksEl.textContent = data.forks_count;
+            }
+        } catch (e) {
+            console.error('Failed to load stats for', repoPath, e);
+        }
+    }
+}
+
+loadPubRepoStats();
